@@ -1,0 +1,784 @@
+```html
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Híres Tudósok – Érdekes tények</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #172554, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 46px;
+            margin: 0 0 15px;
+        }
+
+        header p {
+            font-size: 19px;
+            max-width: 700px;
+            margin: auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 35px 20px;
+        }
+
+        /* Kereső */
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        #search {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #dbe3ef;
+            border-radius: 12px;
+            font-size: 17px;
+            outline: none;
+        }
+
+        #search:focus {
+            border-color: #2563eb;
+        }
+
+        /* Szűrők */
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .filter {
+            border: none;
+            background: #e5e7eb;
+            padding: 10px 17px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .filter:hover {
+            background: #dbeafe;
+        }
+
+        .filter.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Kártyák */
+
+        .scientists {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            padding: 28px;
+            color: white;
+            text-align: center;
+        }
+
+        .einstein {
+            background: linear-gradient(135deg, #111827, #4b5563);
+        }
+
+        .lovelace {
+            background: linear-gradient(135deg, #7c2d12, #db2777);
+        }
+
+        .turing {
+            background: linear-gradient(135deg, #064e3b, #059669);
+        }
+
+        .noether {
+            background: linear-gradient(135deg, #4c1d95, #7c3aed);
+        }
+
+        .newton {
+            background: linear-gradient(135deg, #713f12, #ca8a04);
+        }
+
+        .curie {
+            background: linear-gradient(135deg, #164e63, #0891b2);
+        }
+
+        .portrait {
+            font-size: 85px;
+            margin-bottom: 10px;
+        }
+
+        .card-header h2 {
+            margin: 5px 0;
+            font-size: 27px;
+        }
+
+        .field {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .highlight {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .highlight strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #c2410c;
+        }
+
+        .facts {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .facts li {
+            padding: 11px 0;
+            border-bottom: 1px solid #edf0f5;
+            line-height: 1.5;
+        }
+
+        .facts li:last-child {
+            border-bottom: none;
+        }
+
+        .facts li::before {
+            content: "✓";
+            color: #16a34a;
+            font-weight: bold;
+            margin-right: 9px;
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            font-size: 20px;
+            color: #6b7280;
+        }
+
+        footer {
+            margin-top: 40px;
+            background: #111827;
+            color: #d1d5db;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 34px;
+            }
+
+            header p {
+                font-size: 16px;
+            }
+
+            .scientists {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🧠 Híres tudósok</h1>
+
+    <p>
+        Fizikusok, matematikusok és informatikusok,
+        akik megváltoztatták a világot – meglepő tényekkel.
+    </p>
+</header>
+
+
+<main class="container">
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="search"
+            placeholder="🔎 Keress tudósra vagy érdekességre..."
+        >
+
+        <div class="filters">
+
+            <button class="filter active" data-category="all">
+                Mind
+            </button>
+
+            <button class="filter" data-category="fizikus">
+                ⚛️ Fizikusok
+            </button>
+
+            <button class="filter" data-category="matematikus">
+                📐 Matematikusok
+            </button>
+
+            <button class="filter" data-category="informatikus">
+                💻 Informatikusok
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <section class="scientists" id="scientists">
+
+
+        <!-- EINSTEIN -->
+
+        <article
+            class="card"
+            data-category="fizikus"
+            data-search="albert einstein fizikus relativitás nobel házasság hegedű"
+        >
+
+            <div class="card-header einstein">
+
+                <div class="portrait">👨‍🔬</div>
+
+                <h2>Albert Einstein</h2>
+
+                <div class="field">
+                    Fizikus • 1879–1955
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    Einstein kétszer házasodott,
+                    és első házasságából három gyermeke született.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        1921-ben fizikai Nobel-díjat kapott,
+                        főként a fényelektromos hatás magyarázatáért.
+                    </li>
+
+                    <li>
+                        A híres E = mc² összefüggés a
+                        tömeg és az energia kapcsolatát fejezi ki.
+                    </li>
+
+                    <li>
+                        Dolgozott a berni szabadalmi hivatalban,
+                        miközben több úttörő tudományos munkáját elkészítette.
+                    </li>
+
+                    <li>
+                        Az első világháború után nemzetközileg is
+                        rendkívül ismert tudóssá vált.
+                    </li>
+
+                    <li>
+                        Szabadidejében fontos szerepet játszott életében
+                        a zene és a hegedülés.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+
+        <!-- ADA LOVELACE -->
+
+        <article
+            class="card"
+            data-category="informatikus"
+            data-search="ada lovelace matematikus informatikus programozó babbage analitikai gép"
+        >
+
+            <div class="card-header lovelace">
+
+                <div class="portrait">👩‍💻</div>
+
+                <h2>Ada Lovelace</h2>
+
+                <div class="field">
+                    Matematikus • 1815–1852
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    Ada Lovelace-t gyakran a világ első
+                    számítógép-programozójaként tartják számon.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        Charles Babbage Analytical Engine nevű
+                        mechanikus számítógép-koncepciójával dolgozott.
+                    </li>
+
+                    <li>
+                        Egy olyan algoritmust írt le, amelyet
+                        géppel lehetett volna végrehajtani.
+                    </li>
+
+                    <li>
+                        Felismerte, hogy egy számítógépszerű gép
+                        nemcsak számokkal dolgozhat.
+                    </li>
+
+                    <li>
+                        Lord Byron angol költő lánya volt.
+                    </li>
+
+                    <li>
+                        1835-ben William Kinggel házasodott össze,
+                        és három gyermekük született.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+
+        <!-- TURING -->
+
+        <article
+            class="card"
+            data-category="informatikus"
+            data-search="alan turing számítógép informatika enigma második világháború turing gép"
+        >
+
+            <div class="card-header turing">
+
+                <div class="portrait">💻</div>
+
+                <h2>Alan Turing</h2>
+
+                <div class="field">
+                    Matematikus • Informatikus • 1912–1954
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    Turing a második világháború alatt
+                    a német Enigma-kód feltörésén dolgozott.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        Megalkotta a Turing-gép elméleti modelljét,
+                        amely a számításelmélet egyik alapköve.
+                    </li>
+
+                    <li>
+                        A Bletchley Parkban dolgozott a német
+                        katonai kommunikáció megfejtésén.
+                    </li>
+
+                    <li>
+                        A Cambridge-i King's College-ban tanult matematikát.
+                    </li>
+
+                    <li>
+                        Princetonban doktorált matematikából 1938-ban.
+                    </li>
+
+                    <li>
+                        A modern elméleti számítástudomány egyik
+                        alapító alakjának számít.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+
+        <!-- NOETHER -->
+
+        <article
+            class="card"
+            data-category="matematikus"
+            data-search="emmy noether matematika algebra fizika noether tétel szimmetria"
+        >
+
+            <div class="card-header noether">
+
+                <div class="portrait">📐</div>
+
+                <h2>Emmy Noether</h2>
+
+                <div class="field">
+                    Matematikus • 1882–1935
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    A Noether-tétel kapcsolatot teremt
+                    a fizikai szimmetriák és a megmaradási törvények között.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        A modern absztrakt algebra egyik
+                        meghatározó alakja volt.
+                    </li>
+
+                    <li>
+                        1907-ben doktorált matematikából
+                        az Erlangeni Egyetemen.
+                    </li>
+
+                    <li>
+                        Göttingenbe David Hilbert és Felix Klein
+                        meghívására került.
+                    </li>
+
+                    <li>
+                        A nők számára akkoriban rendkívül nehéz volt
+                        egyetemi matematikai karriert építeni.
+                    </li>
+
+                    <li>
+                        1933-ban az Egyesült Államokba emigrált,
+                        ahol a Bryn Mawr College professzora lett.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+
+        <!-- NEWTON -->
+
+        <article
+            class="card"
+            data-category="fizikus"
+            data-search="isaac newton fizika matematika gravitáció optika calculus"
+        >
+
+            <div class="card-header newton">
+
+                <div class="portrait">🍎</div>
+
+                <h2>Isaac Newton</h2>
+
+                <div class="field">
+                    Fizikus • Matematikus • 1643–1727
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    Newton nemcsak a gravitációval foglalkozott:
+                    jelentős eredményeket ért el az optikában és a matematikában is.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        Megfogalmazta a klasszikus mechanika
+                        három mozgástörvényét.
+                    </li>
+
+                    <li>
+                        A gravitáció egyetemes törvényének
+                        egyik megalkotója.
+                    </li>
+
+                    <li>
+                        Jelentős szerepe volt a differenciál- és
+                        integrálszámítás fejlődésében.
+                    </li>
+
+                    <li>
+                        Optikai kísérletekkel vizsgálta,
+                        hogyan bontható fel a fehér fény színekre.
+                    </li>
+
+                    <li>
+                        1687-ben jelent meg fő műve,
+                        a Principia Mathematica.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+
+        <!-- MARIE CURIE -->
+
+        <article
+            class="card"
+            data-category="fizikus"
+            data-search="marie curie fizika kémia rádium polónium nobel"
+        >
+
+            <div class="card-header curie">
+
+                <div class="portrait">🔬</div>
+
+                <h2>Marie Curie</h2>
+
+                <div class="field">
+                    Fizikus • Kémikus • 1867–1934
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="highlight">
+
+                    <strong>⭐ Tudtad?</strong>
+
+                    Marie Curie két különböző tudományterületen,
+                    fizikából és kémiából is Nobel-díjat kapott.
+
+                </div>
+
+                <ul class="facts">
+
+                    <li>
+                        1903-ban fizikai Nobel-díjat kapott
+                        a radioaktivitással kapcsolatos kutatásaiért.
+                    </li>
+
+                    <li>
+                        1911-ben kémiai Nobel-díjat kapott.
+                    </li>
+
+                    <li>
+                        Pierre Curie-vel együtt kutatta a radioaktivitást.
+                    </li>
+
+                    <li>
+                        A polónium és a rádium kutatásában
+                        kulcsszerepet játszott.
+                    </li>
+
+                    <li>
+                        Ő volt az első nő,
+                        aki Nobel-díjat kapott.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <div class="no-results" id="noResults">
+        😕 Nem találtam ilyen tudóst.
+    </div>
+
+</main>
+
+
+<footer>
+
+    <strong>Híres tudósok</strong>
+
+    <br><br>
+
+    Fizika • Matematika • Informatika
+
+</footer>
+
+
+<script>
+
+    const searchInput = document.getElementById("search");
+    const cards = document.querySelectorAll(".card");
+    const filters = document.querySelectorAll(".filter");
+    const noResults = document.getElementById("noResults");
+
+    let selectedCategory = "all";
+
+
+    function filterScientists() {
+
+        const searchText =
+            searchInput.value.toLowerCase().trim();
+
+        let visible = 0;
+
+
+        cards.forEach(card => {
+
+            const category =
+                card.dataset.category;
+
+            const searchableText =
+                card.dataset.search.toLowerCase();
+
+            const categoryMatch =
+                selectedCategory === "all" ||
+                category === selectedCategory;
+
+            const searchMatch =
+                searchableText.includes(searchText);
+
+            if (categoryMatch && searchMatch) {
+
+                card.style.display = "";
+
+                visible++;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+
+        if (visible === 0) {
+
+            noResults.style.display = "block";
+
+        } else {
+
+            noResults.style.display = "none";
+
+        }
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterScientists
+    );
+
+
+    filters.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            filters.forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            selectedCategory =
+                button.dataset.category;
+
+            filterScientists();
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
+```
